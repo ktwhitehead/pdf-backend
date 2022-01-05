@@ -1,0 +1,25 @@
+org: keatskeet
+app: pdf
+service: pdf
+
+frameworkVersion: '2 || 3'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+
+package:
+  exclude:
+    - node_modules/puppeteer/.local-chromium/**
+
+plugins:
+  - serverless-offline
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+    - http:
+        method: get
+        path: /hello
