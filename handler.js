@@ -6,29 +6,29 @@ const getBrowser = async (chromium) => {
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
-      headless: chromium.headless,
+      headless: true,
       ignoreHTTPSErrors: true
     })
 
   return browser;
 }
 
-
-
-module.exports.hello = async (event) => {
+module.exports.pdf = async (event) => {
   const browser = await getBrowser(chrome);
+  const page = await browser.newPage()
 
-  console.log("KEATON", browser)
+  const body = JSON.parse(event.body)
+  const { css, html } = body
+
+  await page.setContent(html, { waitUntil: 'networkidle0' })
+  await page.addStyleTag({ content: css })
+
+  const pdf = await page.pdf({ format: 'A4' })
 
   return {
     statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v2.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
+    headers: { 'Content-Type': 'application/pdf' },
+    body: pdf.toString('base64'),
+    isBase64Encoded: true
   };
 };

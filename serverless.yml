@@ -17,9 +17,12 @@ plugins:
   - serverless-offline
 
 functions:
-  hello:
-    handler: handler.hello
+  pdf:
+    handler: handler.pdf
     events:
     - http:
-        method: get
-        path: /hello
+        method: post
+        path: /pdf
+        response:
+          headers:
+            Content-Type: "'application/pdf'"
